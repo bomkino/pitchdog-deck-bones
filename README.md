@@ -4,6 +4,8 @@
 
 # Deck Bones
 
+**[Open the live tool](https://pitchdog-deck-bones.dog-pitch.chatgpt.site)**
+
 **Bold choices in. A useful Film & TV deck structure out.**
 
 Deck Bones turns a handful of structured decisions into a page-by-page plan for a scripted feature or series deck. No blank boxes. No universal template pretending every reader wants the same thing.
