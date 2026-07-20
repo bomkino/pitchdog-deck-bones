@@ -14,7 +14,8 @@ Quick mode uses the project form, the deck’s immediate job, the first recipien
 - an ordered set of page jobs with plain reasons;
 - items to reuse, gather, build, park, or verify;
 - assumptions made by the quick route;
-- a horizontal 16:9 plan preview.
+- a horizontal 16:9 plan preview with exact page position and keyboard controls;
+- a local download preserving prerequisites, page jobs, reasoning, parked work, and limitations.
 
 ## Boundaries
 

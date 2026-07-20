@@ -23,6 +23,8 @@ Deck Bones turns a handful of structured decisions into a page-by-page plan for 
 
 Both routes produce the same kind of inspectable result: what comes first, what belongs in the deck, what can be parked, and why.
 
+The result stays deck-shaped: a 16:9 horizontal rail now moves one whole page at a time, names the current page, and works with arrow keys. The download preserves prerequisites and reasoning as well as the page list.
+
 ## Film & TV only
 
 Deck Bones is deliberately narrow. It plans decks for scripted features and series. Advertising, startups, education, and other pitch situations belong in different tools because their evidence, labor, readers, and decisions differ.

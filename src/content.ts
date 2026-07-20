@@ -54,7 +54,7 @@ export const MATERIALS = [
 ] as const satisfies readonly Choice[];
 
 export const ROLES = [
-  { value: "writer", label: "Writer", detail: "The writing and project are the centre." },
+  { value: "writer", label: "Writer", detail: "The writing and project are the center." },
   { value: "writer-director", label: "Writer-director", detail: "Story and screen interpretation are both yours." },
   { value: "director", label: "Director", detail: "The directing idea needs a genuine job." },
   { value: "producer", label: "Producer", detail: "Creative and practical truth can sit together." },
@@ -90,7 +90,7 @@ export const ACCESS = [
   { value: "representative_producer", label: "Through a rep or producer", detail: "A legitimate intermediary controls the route." },
   { value: "open_process", label: "An open call or program", detail: "Current eligibility and rules matter." },
   { value: "accepted_cold", label: "They publicly accept material", detail: "Use the stated route and limits." },
-  { value: "none", label: "No real route yet", detail: "Build access before attachment theatre." },
+  { value: "none", label: "No real route yet", detail: "Build access before attachment theater." },
   { value: "unknown", label: "I have not checked", detail: "Verify before treating a name as a route." },
 ] as const satisfies readonly Choice[];
 
@@ -98,7 +98,7 @@ export const DELIVERIES = [
   { value: "live", label: "I’ll present it live", detail: "The room hears you; the pages can breathe." },
   { value: "read", label: "They’ll read it without me", detail: "The document must carry its own context." },
   { value: "both", label: "Live, then left behind", detail: "One file is doing two jobs. A second cut may be kinder." },
-  { value: "internal", label: "Inside the team", detail: "A useful working document, not theatre." },
+  { value: "internal", label: "Inside the team", detail: "A useful working document, not theater." },
 ] as const satisfies readonly Choice[];
 
 export const ENCOUNTERS = [
@@ -148,7 +148,7 @@ export const BOUNDARIES = [
   { value: "none", label: "No special boundary", detail: "Ordinary working conditions." },
   { value: "sensitive", label: "Sensitive or unannounced material", detail: "Make the traveling version smaller and safer." },
   { value: "images_unclear", label: "Image permission is unclear", detail: "Keep disputed images out without freezing the deck." },
-  { value: "finance_unchecked", label: "Money claims are not checked", detail: "Creative case: yes. Investment theatre: no." },
+  { value: "finance_unchecked", label: "Money claims are not checked", detail: "Creative case: yes. Investment theater: no." },
   { value: "substantial_unpaid", label: "Substantial custom work is unpaid", detail: "Clarify scope, use, terms, and the real decision first." },
   { value: "authority_unclear", label: "Rights or authority are unclear", detail: "Private work can continue; circulation waits." },
 ] as const satisfies readonly Choice[];

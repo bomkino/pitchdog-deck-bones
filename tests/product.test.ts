@@ -25,3 +25,19 @@ test("the product has no grain and always lands new questions at the top", () =>
   assert.match(readFileSync("src/main.ts", "utf8"), /render\(true\)/);
   assert.doesNotMatch(readFileSync("src/main.ts", "utf8"), /textarea|Keep this answer|Are you in danger|shared device/i);
 });
+
+test("conditional answers cannot survive after their question stops applying", () => {
+  const source = readFileSync("src/main.ts", "utf8");
+  assert.match(source, /value !== "series"\) delete target\.seriesShape/);
+  assert.match(source, /value !== "specific"\) delete target\.specificAsk/);
+  assert.match(source, /value !== "funding"\) delete target\.financeBasis/);
+});
+
+test("the downloaded plan and page rail preserve the useful answer", () => {
+  const source = readFileSync("src/main.ts", "utf8");
+  assert.match(source, /## Do this before the deck/);
+  assert.match(source, /## Why this plan/);
+  assert.match(source, /## Assumptions and limits/);
+  assert.match(source, /id="rail-status"/);
+  assert.match(source, /aria-current/);
+});

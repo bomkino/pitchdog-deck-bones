@@ -77,7 +77,7 @@ function landingPage(): string {
     <div class="landing-copy">
       <p class="scope-tag">Film & TV only · scripted features and series</p><p class="kicker">A deck with a reason to exist.</p>
       <h1 data-page-heading tabindex="-1">Plan the deck.</h1>
-      <p class="landing-lede">Choose the real reader and the next decision. Get a useful Film & TV structure out—without blank boxes, template theatre, or a thirty-page tax return.</p>
+      <p class="landing-lede">Choose the real reader and the next decision. Get a useful Film & TV structure out—without blank boxes, template theater, or a thirty-page tax return.</p>
       <div class="landing-proof"><span>Bold choices only</span><span>Pages have one job</span><span>Nothing leaves the browser</span></div>
       <a class="primary-action" href="#choose-a-route">Choose your route <span aria-hidden="true">↓</span></a>
     </div>
@@ -102,7 +102,7 @@ function flowPage(): string {
     ${progress(`${state.ride === "expert" ? "Expert" : "Quick"} Film & TV deck planner`, state.step, active.length)}
     <div class="question-layout">
       <div class="question-copy"><button class="question-back" id="flow-back" type="button">← ${state.step ? "Previous question" : "Choose another route"}</button><div class="question-art" aria-hidden="true"><img src="/assets/hero.webp" alt=""></div><p class="scope-tag">Deck Bones · Film & TV only</p><p class="kicker">${step.kicker}</p><h1 data-page-heading tabindex="-1">${step.question}</h1><p>${step.note}</p></div>
-      <div class="answers-panel"><div class="answers-inner">${choiceGrid(step.choices, step.multiple ? "multi-choice" : "flow-choice", selected, many)}${step.multiple ? '<button class="primary-action multi-continue" id="multi-continue" type="button">Keep going <span aria-hidden="true">↗</span></button>' : ""}</div></div>
+      <div class="answers-panel"><div class="answers-inner"><p class="answers-instruction">${step.multiple ? "Pick every boundary that is real. Nothing else." : "Pick the closest truth. We’ll do the fussy translation."}</p>${choiceGrid(step.choices, step.multiple ? "multi-choice" : "flow-choice", selected, many)}${step.multiple ? '<button class="primary-action multi-continue" id="multi-continue" type="button">Keep going <span aria-hidden="true">↗</span></button>' : ""}</div></div>
     </div>
   </section>`;
 }
@@ -125,12 +125,15 @@ function resultPage(): string {
 }
 
 function pages(result: NonNullable<AppState["result"]>): string {
-  return `<section class="deck-pages" id="deck-pages"><div class="deck-pages__heading"><p class="kicker">The pages</p><h2>Every page gets one job.</h2><p>Scroll sideways. This stays a deck—not an endless vertical tax return.</p><div class="rail-controls"><button id="rail-prev" type="button" aria-label="Previous page">←</button><span>${result.sections.length} main pages</span><button id="rail-next" type="button" aria-label="Next page">→</button></div></div><div class="page-rail" id="page-rail" tabindex="0">${result.sections.map((item, index) => `<article class="deck-page"><span>${String(index + 1).padStart(2, "0")}</span><small>${escapeHTML(item.name)}</small><h3>${escapeHTML(item.job)}</h3><p>${escapeHTML(item.doneWhen)}</p><i aria-hidden="true"></i></article>`).join("")}</div></section>`;
+  return `<section class="deck-pages" id="deck-pages"><div class="deck-pages__heading"><p class="kicker">The pages</p><h2>Every page gets one job.</h2><p>Scroll sideways. This stays a deck—not an endless vertical tax return.</p><div class="rail-controls"><button id="rail-prev" type="button" aria-label="Previous page">←</button><span id="rail-status">Page 1 / ${result.sections.length}</span><button id="rail-next" type="button" aria-label="Next page">→</button></div></div><div class="page-rail" id="page-rail" tabindex="0" role="region" aria-label="Film and TV deck pages">${result.sections.map((item, index) => `<article class="deck-page" data-page-index="${index}" aria-current="${index === 0 ? "true" : "false"}"><span>${String(index + 1).padStart(2, "0")}</span><small>${escapeHTML(item.name)}</small><h3>${escapeHTML(item.job)}</h3><p>${escapeHTML(item.doneWhen)}</p><i aria-hidden="true"></i></article>`).join("")}</div></section>`;
 }
 
 function setAnswer(key: keyof DeckAnswers, value: string): void {
   const target = state.answers as unknown as Record<string, unknown>;
   target[key] = value;
+  if (key === "format" && value !== "series") delete target.seriesShape;
+  if (key === "goal" && value !== "specific") delete target.specificAsk;
+  if (key === "goal" && value !== "funding") delete target.financeBasis;
 }
 
 function advance(): void {
@@ -141,6 +144,9 @@ function advance(): void {
 }
 
 function bindEvents(): void {
+  document.querySelector(".brand")?.addEventListener("click", (event) => {
+    event.preventDefault(); state.phase = "landing"; state.ride = undefined; state.result = undefined; save(); render(true);
+  });
   document.querySelectorAll<HTMLButtonElement>("[data-ride]").forEach((button) => button.addEventListener("click", () => {
     state.ride = button.dataset.ride as Ride; state.phase = "flow"; state.step = 0; state.answers = { boundaries: [] }; save(); render(true);
   }));
@@ -161,14 +167,52 @@ function bindEvents(): void {
   document.querySelector("#change-answers")?.addEventListener("click", () => { state.phase = "flow"; state.step = Math.max(0, steps().length - 1); save(); render(true); });
   document.querySelector("#go-expert")?.addEventListener("click", () => { state.ride = "expert"; state.phase = "flow"; state.step = 0; state.result = undefined; save(); render(true); });
   document.querySelector("#start-over")?.addEventListener("click", () => { clearSession(SESSION_KEY); Object.assign(state, fallback, { answers: { boundaries: [] } }); render(true); });
-  document.querySelector("#download-plan")?.addEventListener("click", () => {
-    const result = state.result!;
-    downloadText("deck-bones-plan.md", `# ${result.headline}\n\n${result.intro}\n\n## This version\n${result.versionBrief.map(([k, v]) => `- **${k}:** ${v}`).join("\n")}\n\n## Main pages\n${result.sections.map((item, index) => `${index + 1}. **${item.name}** — ${item.job}\n   Done when: ${item.doneWhen}`).join("\n")}\n\n## Expert notes\n${result.expertNotes.map((item) => `- ${item}`).join("\n")}\n\n## Leave out\n${result.leaveOut.map((item) => `- ${item}`).join("\n")}\n\nGenerated locally by Deck Bones from pitch.dog.\n`);
-  });
+  document.querySelector("#download-plan")?.addEventListener("click", () => downloadText("deck-bones-plan.md", planMarkdown()));
   const rail = document.querySelector<HTMLElement>("#page-rail");
-  const move = (direction: number) => rail?.scrollBy({ left: direction * Math.max(280, rail.clientWidth * 0.72), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
-  document.querySelector("#rail-prev")?.addEventListener("click", () => move(-1));
-  document.querySelector("#rail-next")?.addEventListener("click", () => move(1));
+  const cards = [...(rail?.querySelectorAll<HTMLElement>(".deck-page") ?? [])];
+  const previous = document.querySelector<HTMLButtonElement>("#rail-prev");
+  const next = document.querySelector<HTMLButtonElement>("#rail-next");
+  const status = document.querySelector<HTMLElement>("#rail-status");
+  let railIndex = 0;
+  let railFrame = 0;
+  const paintRail = () => {
+    previous && (previous.disabled = railIndex <= 0);
+    next && (next.disabled = railIndex >= cards.length - 1);
+    if (status) status.textContent = `Page ${railIndex + 1} / ${cards.length}`;
+    cards.forEach((card, index) => card.setAttribute("aria-current", String(index === railIndex)));
+  };
+  const nearestRailIndex = () => {
+    if (!rail || !cards.length) return 0;
+    const first = cards[0]!.offsetLeft;
+    return cards.reduce((nearest, card, index) => Math.abs(card.offsetLeft - first - rail.scrollLeft) < Math.abs(cards[nearest]!.offsetLeft - first - rail.scrollLeft) ? index : nearest, 0);
+  };
+  const moveRail = (direction: number) => {
+    if (!rail || !cards.length) return;
+    railIndex = Math.max(0, Math.min(cards.length - 1, railIndex + direction));
+    rail.scrollTo({ left: cards[railIndex]!.offsetLeft - cards[0]!.offsetLeft, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    paintRail();
+  };
+  previous?.addEventListener("click", () => moveRail(-1));
+  next?.addEventListener("click", () => moveRail(1));
+  rail?.addEventListener("scroll", () => { cancelAnimationFrame(railFrame); railFrame = requestAnimationFrame(() => { railIndex = nearestRailIndex(); paintRail(); }); }, { passive: true });
+  rail?.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") { event.preventDefault(); moveRail(event.key === "ArrowLeft" ? -1 : 1); }
+    if (event.key === "Home" || event.key === "End") { event.preventDefault(); railIndex = event.key === "Home" ? 1 : cards.length - 2; moveRail(event.key === "Home" ? -1 : 1); }
+  });
+  paintRail();
+}
+
+function planMarkdown(): string {
+  const result = state.result;
+  if (!result) return "# Deck Bones\n\nNo plan yet.\n";
+  const pages = result.sections.length
+    ? result.sections.map((item, index) => `${index + 1}. **${item.name}** — ${item.job}\n   Done when: ${item.doneWhen}`).join("\n")
+    : "No deck pages yet. Complete the prerequisite first.";
+  const optional = result.optional.length
+    ? result.optional.map((item) => `- **${item.name}:** ${item.job} — ${item.reason}`).join("\n")
+    : "- Nothing parked.";
+  const expert = result.expertNotes.length ? result.expertNotes.map((item) => `- ${item}`).join("\n") : "- Quick-route assumptions remain visible in the plan.";
+  return `# ${result.headline}\n\n${result.intro}\n\n## This version\n\n${result.versionBrief.map(([key, value]) => `- **${key}:** ${value}`).join("\n")}${result.preDeckAction ? `\n\n## Do this before the deck\n\n${result.preDeckAction}` : ""}\n\n## Main pages\n\n${pages}\n\n## Why this plan\n\n${result.reasons.map((item) => `- ${item}`).join("\n")}\n\n## What the expert context changed\n\n${expert}\n\n## Useful later—not in the main path\n\n${optional}\n\n## Leave out\n\n${result.leaveOut.map((item) => `- ${item}`).join("\n")}\n\n## Assumptions and limits\n\n${result.raw.limitations.map((item) => `- ${item}`).join("\n")}\n\nGenerated locally by Deck Bones from pitch.dog.\n`;
 }
 
 history.scrollRestoration = "manual";

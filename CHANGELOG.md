@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0 — 2026-07-20
+
+- Prevented conditional series, request, and finance answers from leaking into plans after their parent choice changes.
+- Turned the 16:9 page rail into exact page-by-page navigation with current-page status, disabled edge controls, and keyboard travel.
+- Expanded downloaded plans to preserve prerequisites, reasons, parked pages, expert context, and limitations.
+- Added plain choice guidance, truthful home/theme controls, USA-facing copy polish, and refreshed public journey images.
+
 ## 1.0.0 — 2026-07-20
 
 - Released Deck Bones as an independent Film and TV deck planner.
